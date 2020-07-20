@@ -35,12 +35,18 @@ export class Repository {
     if (!opts['message'] || !opts['message'][0])
       throw new Error("Need message parameter: -m '<message>'");
 
-    const time = deltaTime(opts['time']).toLocaleDateString();
-    const message = opts['message'][1];
+    const date = deltaTime(opts['time']);
+    const message = opts['message'];
 
     // Add job for user
+    try {
+      const job = new Job(date, message, channel);
+      user.addJob(job);
+    } catch (e) {
+      throw e;
+    }
 
-    return `Time: ${time}\nMessage: ${message}`;
+    return 'Successfully created a job';
   }
 
   public cancelJob(id: Discord.Snowflake, args: string[]): string {
@@ -65,21 +71,39 @@ class User {
   }
 
   public addJob(job: Job): void {
-    this._jobs.concat(job);
+    this._jobs.push(job);
   }
 
-  // public removeJob(job: Job): void {
-  //   this._jobs.concat(job);
-  // }
+  public removeJob(id: number): Job {
+    if (this._jobs.length < id) throw new Error(`Index ${id} not found`);
+
+    const j = this._jobs.splice(id, 1);
+    return j[0];
+  }
+
+  public listJob(): Job[] {
+    return this._jobs;
+  }
 }
 
 class Job {
+  private _date: Date;
   private _message: string;
   private _job: schedule.Job;
+  private _chan: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel;
 
-  public constructor(message: string, job: schedule.Job) {
+  public constructor(
+    date: Date,
+    message: string,
+    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+  ) {
+    this._date = date;
     this._message = message;
-    this._job = job;
+    this._chan = channel;
+    console.log(date);
+    this._job = schedule.scheduleJob(date, () => {
+      channel.send(message);
+    });
   }
 
   public reschedule(date: Date) {
