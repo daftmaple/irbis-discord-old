@@ -3,7 +3,8 @@ import schedule from 'node-schedule';
 import Discord from 'discord.js';
 import getopts from 'getopts';
 
-import { deltaTime } from './delta';
+import { parseDeltaTime, momentDiffString } from './delta';
+import { MessageError } from './error';
 
 @singleton()
 export class Repository {
@@ -31,16 +32,18 @@ export class Repository {
       },
     });
 
-    if (!opts['time']) throw new Error('Need time parameter: -t <time>');
+    if (!opts['time']) throw new MessageError('Need time parameter: -t <time>');
     if (!opts['message'] || !opts['message'][0])
-      throw new Error("Need message parameter: -m '<message>'");
+      throw new MessageError("Need message parameter: -m '<message>'");
 
-    const date = deltaTime(opts['time']);
-    const message = opts['message'];
+    const date = parseDeltaTime(opts['time']);
+    const message = (opts['message'] as string)
+      .replace(/^['"]/, '')
+      .replace(/['"]$/, '');
 
     // Add job for user
     try {
-      const job = new Job(date, message, channel);
+      const job = new Job(date, message, channel, user);
       user.addJob(job);
     } catch (e) {
       throw e;
@@ -51,14 +54,46 @@ export class Repository {
 
   public cancelJob(id: Discord.Snowflake, args: string[]): string {
     // Cancel job for user based on opts
+    let user = this._users.get(id);
+    if (!user) {
+      throw new MessageError("User doesn't have any job");
+    }
 
-    return '';
+    if (!args[0]) throw new MessageError('Need an argument: index of job');
+
+    const index = parseInt(args[0], 10);
+    if (isNaN(index))
+      throw new MessageError(`Invalid argument ${args[0]}. Need index of job`);
+
+    const job = user.removeJob(index);
+
+    return `Job has been removed: ${job.toString()}`;
   }
 
-  public listJob(id: Discord.Snowflake): string {
-    // List all jobs for user
+  public listJob(id: Discord.Snowflake): string | Discord.MessageEmbed {
+    let user = this._users.get(id);
+    if (!user) {
+      throw new MessageError("User doesn't have any job");
+    }
 
-    return '';
+    const jobs = user.listJob();
+
+    if (jobs.length === 0) return "User doesn't have any job";
+
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle('List of scheduled jobs');
+    embed.addFields([
+      {
+        name: 'Jobs',
+        value: jobs
+          .map((job, index) => {
+            return `${index}: ${job.toString()}`;
+          })
+          .join('\n'),
+      },
+    ]);
+
+    return embed;
   }
 }
 
@@ -75,10 +110,18 @@ class User {
   }
 
   public removeJob(id: number): Job {
-    if (this._jobs.length < id) throw new Error(`Index ${id} not found`);
+    if (this._jobs.length < id) throw new MessageError(`Index ${id} not found`);
 
     const j = this._jobs.splice(id, 1);
+    j[0].cancel();
     return j[0];
+  }
+
+  public removeJobCallback(job: Job): void {
+    const index = this._jobs.indexOf(job);
+    if (index === -1) return;
+
+    this._jobs.splice(index, 1);
   }
 
   public listJob(): Job[] {
@@ -95,14 +138,15 @@ class Job {
   public constructor(
     date: Date,
     message: string,
-    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel,
+    user: User
   ) {
     this._date = date;
     this._message = message;
     this._chan = channel;
-    console.log(date);
     this._job = schedule.scheduleJob(date, () => {
       channel.send(message);
+      user.removeJobCallback(this);
     });
   }
 
@@ -114,7 +158,15 @@ class Job {
     this._job.cancel();
   }
 
-  public get message(): string {
-    return this._message;
+  // public get message(): string {
+  //   return this._message;
+  // }
+
+  private timeDiffString(): string {
+    return momentDiffString(this._date).join(', ');
+  }
+
+  public toString(): string {
+    return `(in ${this.timeDiffString()}) ${this._message}`;
   }
 }

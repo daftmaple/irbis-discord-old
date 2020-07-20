@@ -29,3 +29,4 @@ For example, if you want to create a reminder that gets executed in 5 hours and 
 ## To do
 
 - Allow user to use message on a different channel
+- Allow user to reschedule their time

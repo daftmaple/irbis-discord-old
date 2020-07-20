@@ -3,6 +3,7 @@ import { container, singleton } from 'tsyringe';
 import dotenv from 'dotenv';
 
 import { Handler } from './handler';
+import { MessageError } from './error';
 
 dotenv.config();
 
@@ -26,7 +27,7 @@ client.on('message', async (message: Discord.Message) => {
     const m = handler.handleMessage(message);
     message.channel.send(m);
   } catch (e) {
-    if (e instanceof Error) message.channel.send(e.message);
+    if (e instanceof MessageError) message.channel.send(e.message);
   }
 });
 
