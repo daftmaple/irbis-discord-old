@@ -21,6 +21,7 @@
     "getopts": "^2.2.5",
     "moment": "^2.27.0",
     "node-schedule": "^1.3.2",
+    "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0",
     "typescript": "^3.9.6"
   }

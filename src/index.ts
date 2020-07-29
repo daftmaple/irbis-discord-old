@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import Discord from 'discord.js';
 import { container, singleton } from 'tsyringe';
 import dotenv from 'dotenv';
