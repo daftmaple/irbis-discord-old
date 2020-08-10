@@ -24,13 +24,7 @@ const prefix = process.env.BOT_PREFIX || 'r!';
 client.on('message', async (message: Discord.Message) => {
   const handler = container.resolve(Handler);
   if (!message.content.startsWith(prefix)) return;
-
-  try {
-    const m = handler.handleMessage(message);
-    message.channel.send(m);
-  } catch (e) {
-    if (e instanceof MessageError) message.channel.send(e.message);
-  }
+  handler.handleMessage(message);
 });
 
 client.login(process.env.BOT_TOKEN!);

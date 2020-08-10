@@ -17,7 +17,7 @@ export class Repository {
     id: Discord.Snowflake,
     args: string[],
     channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
-  ): string {
+  ): void {
     let user = this._users.get(id);
     if (!user) {
       user = new User(id);
@@ -49,10 +49,14 @@ export class Repository {
       throw e;
     }
 
-    return 'Successfully created a job';
+    channel.send('Successfully created a job');
   }
 
-  public cancelJob(id: Discord.Snowflake, args: string[]): string {
+  public cancelJob(
+    id: Discord.Snowflake,
+    args: string[],
+    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+  ): void {
     // Cancel job for user based on opts
     let user = this._users.get(id);
     if (!user) {
@@ -67,10 +71,13 @@ export class Repository {
 
     const job = user.removeJob(index);
 
-    return `Job has been removed: ${job.toString()}`;
+    channel.send(`Job has been removed: ${job.toString()}`);
   }
 
-  public listJob(id: Discord.Snowflake): string | Discord.MessageEmbed {
+  public listJob(
+    id: Discord.Snowflake,
+    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+  ): void {
     let user = this._users.get(id);
     if (!user) {
       throw new MessageError("User doesn't have any job");
@@ -78,8 +85,10 @@ export class Repository {
 
     const jobs = user.listJob();
 
-    if (jobs.length === 0) return "User doesn't have any job";
-
+    if (jobs.length === 0) {
+      channel.send("User doesn't have any job");
+      return;
+    }
     const embed = new Discord.MessageEmbed();
     embed.setTitle('List of scheduled jobs');
     embed.addFields([
@@ -93,7 +102,7 @@ export class Repository {
       },
     ]);
 
-    return embed;
+    channel.send(embed);
   }
 }
 

@@ -15,6 +15,11 @@ Options
 | Yes (yes)          | `-m '<message>'`          | Use a message                                                                                                                                                                             |
 | Yes (yes)          | `-t <time>`               | Delta time of when it needs to be executed compared to time = now. Formatting should follow [time formatting](#time-formatting)                                                           |
 | No (no)            | `-c, --chan <channel_id>` | Channel id of the channel that you want the bot to put message. This channel must be bot-accessible. If this is not supplied, this defaults to the channel where the command is executed. |
+| No                 | `-d`                      | Delete your command message                                                                                                                                                               |
+| No                 | `-s, --silent`            | Silently executes command                                                                                                                                                                 |
+| No                 | `-i`                      | Self-ping                                                                                                                                                                                 |
+| No                 | `-e`                      | Mention everyone (user should have the power to tag everyone)                                                                                                                             |
+| No                 | `-u <user_id>`            | Mention user id                                                                                                                                                                           |
 
 ## Time formatting
 

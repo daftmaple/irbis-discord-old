@@ -8,7 +8,7 @@ type MessageFunction = (
   user: Discord.User,
   args: string[],
   channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
-) => string | Discord.MessageEmbed;
+) => void;
 
 @singleton()
 export class Handler {
@@ -26,13 +26,15 @@ export class Handler {
     );
   }
 
-  public handleMessage(
-    message: Discord.Message
-  ): string | Discord.MessageEmbed {
+  public handleMessage(message: Discord.Message) {
     const command: string = message.content.slice(this._prefix.length).trim();
 
     // Split with positive single/double quote lookahead
-    const args = command.split(/\s+(?=(?:(?:[^'"]*['"]){2})*[^'"]*$)/);
+    const args = command
+      .split(
+        /("[^"\\]*(?:\\[\S\s][^"\\]*)*"|'[^'\\]*(?:\\[\S\s][^'\\]*)*'|\/[^\/\\]*(?:\\[\S\s][^\/\\]*)*\/[gimy]*(?=\s|$)|(?:\\\s|\S)+)/
+      )
+      .filter((char) => !char.match(/^\s*$/));
     const cmd = args.shift();
 
     if (!cmd) throw new Error();
@@ -42,12 +44,10 @@ export class Handler {
     let reply: string | Discord.MessageEmbed = '';
     try {
       const func = this._command.get(cmd);
-      if (!!func) reply = func(user, args, message.channel);
+      if (!!func) func(user, args, message.channel);
     } catch (e) {
-      if (e instanceof MessageError) throw e;
+      if (e instanceof MessageError) message.channel.send(e.message);
     }
-
-    return reply;
   }
 }
 
@@ -55,40 +55,37 @@ const create: MessageFunction = (
   user: Discord.User,
   args: string[],
   channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
-): string => {
+): void => {
   const repo = container.resolve(Repository);
-  let reply = '';
   try {
-    reply = repo.createJob(user.id, args, channel);
+    repo.createJob(user.id, args, channel);
   } catch (e) {
     if (e instanceof MessageError) throw e;
   }
-  return reply;
 };
 
 const cancel: MessageFunction = (
   user: Discord.User,
-  args: string[]
-): string => {
+  args: string[],
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+): void => {
   const repo = container.resolve(Repository);
-  let reply = '';
   try {
-    reply = repo.cancelJob(user.id, args);
+    repo.cancelJob(user.id, args, channel);
   } catch (e) {
     if (e instanceof MessageError) throw e;
   }
-  return reply;
 };
 
 const list: MessageFunction = (
-  user: Discord.User
-): string | Discord.MessageEmbed => {
+  user: Discord.User,
+  args: string[],
+  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+): void => {
   const repo = container.resolve(Repository);
-  let reply: string | Discord.MessageEmbed = '';
   try {
-    reply = repo.listJob(user.id);
+    repo.listJob(user.id, channel);
   } catch (e) {
     if (e instanceof MessageError) throw e;
   }
-  return reply;
 };
