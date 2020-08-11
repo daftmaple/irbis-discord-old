@@ -5,8 +5,6 @@ import { container, singleton } from 'tsyringe';
 import dotenv from 'dotenv';
 
 import { Handler } from './handler';
-import { MessageError } from './error';
-
 dotenv.config();
 
 class ClientProvider extends Discord.Client {
@@ -28,3 +26,12 @@ client.on('message', async (message: Discord.Message) => {
 });
 
 client.login(process.env.BOT_TOKEN!);
+client.on('ready', () => {
+  if (client.user)
+    client.user.setPresence({
+      activity: {
+        name: `${prefix}help`,
+        type: 'LISTENING',
+      },
+    });
+});

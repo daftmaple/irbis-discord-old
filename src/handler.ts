@@ -22,6 +22,7 @@ export class Handler {
         create: create,
         cancel: cancel,
         list: list,
+        help: help,
       })
     );
   }
@@ -87,4 +88,33 @@ const list: MessageFunction = (
   } catch (e) {
     if (e instanceof MessageError) throw e;
   }
+};
+
+const help: MessageFunction = (
+  user: Discord.User,
+  args: string[],
+  message: Discord.Message
+): void => {
+  const embed = new Discord.MessageEmbed();
+  embed.setTitle('Commands and args:');
+  const opts = [
+    '-m (message)',
+    '-t (time)',
+    '-c (channel)',
+    '-s (silent)',
+    '-d (delete)',
+    '-i (self)',
+    '-e (everyone)',
+    '-u (user)',
+  ];
+  embed.addFields([
+    {
+      name: 'Create',
+      value: 'Create a job. Options:\n' + opts.join('\n'),
+    },
+    { name: 'cancel', value: 'Cancel currently running job' },
+    { name: 'list', value: 'List all of your currently running job' },
+    { name: 'help', value: 'This help embed' },
+  ]);
+  message.channel.send(embed);
 };
