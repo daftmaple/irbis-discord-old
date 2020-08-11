@@ -7,7 +7,7 @@ import { MessageError } from './error';
 type MessageFunction = (
   user: Discord.User,
   args: string[],
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+  message: Discord.Message
 ) => void;
 
 @singleton()
@@ -41,10 +41,9 @@ export class Handler {
 
     const user = message.author;
 
-    let reply: string | Discord.MessageEmbed = '';
     try {
       const func = this._command.get(cmd);
-      if (!!func) func(user, args, message.channel);
+      if (!!func) func(user, args, message);
     } catch (e) {
       if (e instanceof MessageError) message.channel.send(e.message);
     }
@@ -54,11 +53,11 @@ export class Handler {
 const create: MessageFunction = (
   user: Discord.User,
   args: string[],
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+  message: Discord.Message
 ): void => {
   const repo = container.resolve(Repository);
   try {
-    repo.createJob(user.id, args, channel);
+    repo.createJob(user.id, args, message);
   } catch (e) {
     if (e instanceof MessageError) throw e;
   }
@@ -67,11 +66,11 @@ const create: MessageFunction = (
 const cancel: MessageFunction = (
   user: Discord.User,
   args: string[],
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+  message: Discord.Message
 ): void => {
   const repo = container.resolve(Repository);
   try {
-    repo.cancelJob(user.id, args, channel);
+    repo.cancelJob(user.id, args, message);
   } catch (e) {
     if (e instanceof MessageError) throw e;
   }
@@ -80,11 +79,11 @@ const cancel: MessageFunction = (
 const list: MessageFunction = (
   user: Discord.User,
   args: string[],
-  channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+  message: Discord.Message
 ): void => {
   const repo = container.resolve(Repository);
   try {
-    repo.listJob(user.id, channel);
+    repo.listJob(user.id, message);
   } catch (e) {
     if (e instanceof MessageError) throw e;
   }

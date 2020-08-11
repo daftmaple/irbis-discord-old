@@ -16,7 +16,7 @@ export class Repository {
   public createJob(
     id: Discord.Snowflake,
     args: string[],
-    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+    message: Discord.Message
   ): void {
     let user = this._users.get(id);
     if (!user) {
@@ -29,33 +29,50 @@ export class Repository {
         message: 'm',
         time: 't',
         channel: ['c', 'chan'],
+        silent: 's',
+        delete: 'd',
+        self: 'i',
+        everyone: 'e',
+        user: 'u',
       },
     });
 
     if (!opts['time']) throw new MessageError('Need time parameter: -t <time>');
-    if (!opts['message'] || !opts['message'][0])
+    if (typeof opts['message'] !== 'string')
       throw new MessageError("Need message parameter: -m '<message>'");
 
     const date = parseDeltaTime(opts['time']);
-    const message = (opts['message'] as string)
+    let parsedMessage = (opts['message'] as string)
       .replace(/^['"]/, '')
       .replace(/['"]$/, '');
 
+    if (opts['self'])
+      parsedMessage = `<@${message.author.id}> ${parsedMessage}`;
+
+    if (typeof opts['user'] === 'string' && opts['user'].match(/^<@\!\d+>$/)) {
+      parsedMessage = `${opts['user'].toString()} ${parsedMessage}`;
+    } else {
+      throw new MessageError('Need valid parameter for user: -u @user');
+    }
+
+    if (opts['everyone']) parsedMessage = `@everyone ${parsedMessage}`;
+
     // Add job for user
     try {
-      const job = new Job(date, message, channel, user);
+      const job = new Job(date, parsedMessage, message.channel, user);
       user.addJob(job);
     } catch (e) {
       throw e;
     }
 
-    channel.send('Successfully created a job');
+    if (opts['delete']) message.delete();
+    if (!opts['silent']) message.channel.send('Successfully created a job');
   }
 
   public cancelJob(
     id: Discord.Snowflake,
     args: string[],
-    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
+    message: Discord.Message
   ): void {
     // Cancel job for user based on opts
     let user = this._users.get(id);
@@ -71,13 +88,10 @@ export class Repository {
 
     const job = user.removeJob(index);
 
-    channel.send(`Job has been removed: ${job.toString()}`);
+    message.channel.send(`Job has been removed: ${job.toString()}`);
   }
 
-  public listJob(
-    id: Discord.Snowflake,
-    channel: Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel
-  ): void {
+  public listJob(id: Discord.Snowflake, message: Discord.Message): void {
     let user = this._users.get(id);
     if (!user) {
       throw new MessageError("User doesn't have any job");
@@ -86,7 +100,7 @@ export class Repository {
     const jobs = user.listJob();
 
     if (jobs.length === 0) {
-      channel.send("User doesn't have any job");
+      message.channel.send("User doesn't have any job");
       return;
     }
     const embed = new Discord.MessageEmbed();
@@ -102,7 +116,7 @@ export class Repository {
       },
     ]);
 
-    channel.send(embed);
+    message.channel.send(embed);
   }
 }
 
