@@ -3,6 +3,7 @@ import Discord from 'discord.js';
 
 import { Repository } from './repository';
 import { MessageError } from './error';
+import { systemExec } from './system';
 
 type MessageFunction = (
   user: Discord.User,
@@ -23,6 +24,7 @@ export class Handler {
         cancel: cancel,
         list: list,
         help: help,
+        load: load,
       })
     );
   }
@@ -115,6 +117,39 @@ const help: MessageFunction = (
     { name: 'cancel', value: 'Cancel currently running job' },
     { name: 'list', value: 'List all of your currently running job' },
     { name: 'help', value: 'This help embed' },
+    { name: 'load', value: 'System load' },
   ]);
   message.channel.send(embed);
+};
+
+const load: MessageFunction = async (
+  user: Discord.User,
+  args: string[],
+  message: Discord.Message
+) => {
+  try {
+    const cpuLoad = (
+      await systemExec(
+        "grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage }'"
+      )
+    ).replace('\n', '');
+    const mem = (await systemExec('free -t -m')).split('\n');
+    const tmem = mem.filter((line) => !line.match(/^\s*$/)).slice(-1)[0];
+    const totalMem = tmem.split(/\s+/).slice(1);
+    const memUsage = [
+      `Total: ${totalMem[0]} MB`,
+      `Used: ${totalMem[1]} MB`,
+      `Free: ${totalMem[2]} MB`,
+    ];
+
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle('System load');
+    embed.addFields([
+      { name: 'CPU usage', value: `${parseFloat(cpuLoad).toFixed(2)}%` },
+      { name: 'Memory', value: memUsage.join('\n') },
+    ]);
+    message.channel.send(embed);
+  } catch (e) {
+    console.log(e);
+  }
 };
