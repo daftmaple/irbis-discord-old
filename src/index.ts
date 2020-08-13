@@ -30,7 +30,7 @@ client.on('ready', () => {
   if (client.user)
     client.user.setPresence({
       activity: {
-        name: `${prefix}help`,
+        name: `${prefix}help | version ${process.env.npm_package_version}`,
         type: 'LISTENING',
       },
     });
