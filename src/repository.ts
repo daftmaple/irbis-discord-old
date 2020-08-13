@@ -51,7 +51,7 @@ export class Repository {
 
     if (typeof opts['user'] === 'string' && opts['user'].match(/^<@\!\d+>$/)) {
       parsedMessage = `${opts['user'].toString()} ${parsedMessage}`;
-    } else {
+    } else if (typeof opts['user'] === 'boolean') {
       throw new MessageError('Need valid parameter for user: -u @user');
     }
 
