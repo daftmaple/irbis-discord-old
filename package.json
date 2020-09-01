@@ -1,7 +1,7 @@
 {
-  "name": "reminder-discord",
-  "version": "0.1.0",
-  "main": "build/index.js",
+  "name": "irbisbot",
+  "version": "0.1.1",
+  "main": "build/src/index.js",
   "license": "MIT",
   "scripts": {
     "start": "node build/src/index.js",

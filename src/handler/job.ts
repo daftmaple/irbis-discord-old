@@ -13,7 +13,9 @@ const job: MessageFunction = async (
   const firstArg = args.shift();
 
   if (!firstArg) {
-    message.channel.send(`Missing argument for command: create/list/cancel`);
+    message.channel.send(
+      `Missing argument for command: create/list/cancel/help`
+    );
     return;
   }
 
@@ -92,10 +94,7 @@ const help: MessageFunction = (
   embed.setTitle('Args for command `job`:');
 
   embed.addFields([
-    {
-      name: 'create',
-      value: 'Create a job. Options:\n' + opts.join('\n'),
-    },
+    { name: 'create', value: 'Create a job. Options:\n' + opts.join('\n') },
     { name: 'cancel', value: 'Cancel currently running job' },
     { name: 'list', value: 'List all of your currently running job' },
   ]);
