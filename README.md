@@ -2,11 +2,16 @@
 
 A Discord bot that works as a reminder. This is an attempt for me to learn how to use a better design pattern to avoid procedural switch-case and understanding how dependency injection framework in TS works.
 
+## Set up
+
+- Copy `config.json.example` to `config.json`
+- Copy `.env.example` to `.env`
+
 ## Specification
 
 ### Create a job
 
-> r!create
+> r!job create
 
 Options
 

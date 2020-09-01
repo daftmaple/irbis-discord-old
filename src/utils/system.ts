@@ -6,6 +6,9 @@ const systemExec = async (input: string): Promise<string> => {
       if (error) {
         reject(error.message);
       }
+      if (stderr) {
+        reject(stderr);
+      }
       if (stdout) {
         resolve(stdout);
       }

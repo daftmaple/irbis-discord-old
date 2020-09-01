@@ -1,10 +1,10 @@
-import { singleton } from 'tsyringe';
-import schedule from 'node-schedule';
 import Discord from 'discord.js';
+import { singleton } from 'tsyringe';
 import getopts from 'getopts';
+import schedule from 'node-schedule';
 
-import { parseDeltaTime, momentDiffString } from './delta';
-import { MessageError } from './error';
+import { parseDeltaTime, momentDiffString } from './utils/delta';
+import { MessageError } from './types/error';
 
 @singleton()
 export class Repository {

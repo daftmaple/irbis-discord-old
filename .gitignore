@@ -5,3 +5,4 @@ build/
 .env
 .data/
 .idea/
+config.json
