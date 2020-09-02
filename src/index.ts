@@ -1,30 +1,28 @@
 import 'reflect-metadata';
 
 import Discord from 'discord.js';
-import { container, singleton } from 'tsyringe';
-import dotenv from 'dotenv';
-
+import { container } from 'tsyringe';
 import { Handler } from './handler';
-dotenv.config();
+import { BotConfig } from './utils/config';
 
 const client: Discord.Client = new Discord.Client({
   retryLimit: 3,
 });
 
-const prefix = process.env.DISCORD_BOT_PREFIX || 'r!';
+const discordConfig = BotConfig.discordConfig;
 
 client.on('message', async (message: Discord.Message) => {
   const handler = container.resolve(Handler);
-  if (!message.content.startsWith(prefix)) return;
+  if (!message.content.startsWith(discordConfig.prefix)) return;
   handler.handleMessage(message);
 });
 
-client.login(process.env.DISCORD_BOT_TOKEN!);
+client.login(discordConfig.token);
 client.on('ready', () => {
   if (client.user) {
     client.user.setPresence({
       activity: {
-        name: `${prefix}help | version ${process.env.npm_package_version}`,
+        name: `${discordConfig.prefix}help | version ${process.env.npm_package_version}`,
         type: 'LISTENING',
       },
     });

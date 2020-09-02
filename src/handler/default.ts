@@ -1,9 +1,10 @@
 import Discord from 'discord.js';
 
 import { MessageFunction } from '../types/message';
+import { BotConfig } from '../utils/config';
 import { systemExec } from '../utils/system';
 
-const prefix = process.env.DISCORD_BOT_PREFIX;
+const prefix = BotConfig.discordConfig.prefix;
 const npmVersion = process.env.npm_package_version;
 
 const help: MessageFunction = (message: Discord.Message): void => {
@@ -15,9 +16,12 @@ const help: MessageFunction = (message: Discord.Message): void => {
       name: 'job',
       value: `Create/cancel/list user job. Use \`${prefix}job help\` for more details`,
     },
-    { name: 'help', value: 'This help embed' },
+    {
+      name: 'role',
+      value: `Assign/deassign role. Use \`${prefix}job help\` for more details`,
+    },
     { name: 'load', value: 'System load' },
-    { name: 'role', value: 'Assign/deassign role' },
+    { name: 'help', value: 'This help embed' },
     { name: 'version', value: 'Bot version' },
   ]);
   embed.setFooter(`Version ${npmVersion}`);

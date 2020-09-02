@@ -4,5 +4,16 @@
       "name": "rolename",
       "id": "700001111222233334"
     }
-  ]
+  ],
+  "discordConfig": {
+    "token": "",
+    "prefix": ""
+  },
+  "twitchNotificationConfig": {
+    "discordRoleId": "",
+    "discordChannelId": "",
+    "twitchChannelId": "",
+    "twitchClientId": "",
+    "twitchClientSecret": ""
+  }
 }

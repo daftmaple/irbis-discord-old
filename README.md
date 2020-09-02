@@ -5,7 +5,6 @@ A Discord bot that works as a reminder. This is an attempt for me to learn how t
 ## Set up
 
 - Copy `config.json.example` to `config.json`
-- Copy `.env.example` to `.env`
 
 ## Specification
 

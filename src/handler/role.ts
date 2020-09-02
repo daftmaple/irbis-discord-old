@@ -51,13 +51,13 @@ const add: MessageFunction = (
     try {
       const discordRole = message.guild?.roles.cache.get(roleToAdd.id);
       if (!discordRole) {
-        message.channel.send(`Unable to find role`);
+        message.channel.send(`Unable to resolve role`);
       } else {
         message.member?.roles.add(discordRole);
         message.channel.send(`Role ${roleName} added`);
       }
     } catch (e) {
-      message.channel.send(`Unable to find role`);
+      message.channel.send(`Unable to resolve role`);
     }
   }
 };
@@ -83,13 +83,13 @@ const remove: MessageFunction = (
     try {
       const discordRole = message.guild?.roles.cache.get(roleToRemove.id);
       if (!discordRole) {
-        message.channel.send(`Unable to find role`);
+        message.channel.send(`Unable to resolve role`);
       } else {
         message.member?.roles.remove(discordRole);
         message.channel.send(`Role ${roleName} removed`);
       }
     } catch (e) {
-      message.channel.send(`Unable to find role`);
+      message.channel.send(`Unable to resolve role`);
     }
   }
 };

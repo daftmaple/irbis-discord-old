@@ -6,6 +6,7 @@ import { MessageFunction } from './types/message';
 import { defaultHandler } from './handler/default';
 import { jobHandler } from './handler/job';
 import { roleHandler } from './handler/role';
+import { BotConfig } from './utils/config';
 
 @singleton()
 export class Handler {
@@ -13,7 +14,7 @@ export class Handler {
   private _command: Map<string, MessageFunction>;
 
   constructor() {
-    this._prefix = process.env.DISCORD_BOT_PREFIX || 'r!';
+    this._prefix = BotConfig.discordConfig.prefix;
     this._command = new Map(
       Object.entries({
         help: defaultHandler.help,
