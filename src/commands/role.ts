@@ -26,7 +26,11 @@ const role: MessageFunction = async (
   const func = mapper.get(firstArg);
   if (!!func) func(message, user, args);
   else {
-    message.channel.send(`Invalid argument \`${firstArg}\``);
+    message.channel.send(
+      `Invalid argument \`${firstArg}\`. Valid arguments: \`${Array.from(
+        mapper.keys()
+      ).join(', ')}\``
+    );
   }
 };
 

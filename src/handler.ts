@@ -3,9 +3,7 @@ import Discord from 'discord.js';
 
 import { MessageError } from './types/error';
 import { MessageFunction } from './types/message';
-import { defaultHandler } from './handler/default';
-import { jobHandler } from './handler/job';
-import { roleHandler } from './handler/role';
+import { defaultHandler, jobHandler, roleHandler } from './commands';
 import { BotConfig } from './utils/config';
 
 @singleton()
