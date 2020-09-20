@@ -19,6 +19,7 @@ const role: MessageFunction = async (
     Object.entries({
       add: add,
       remove: remove,
+      list: list,
       help: help,
     })
   );
@@ -98,6 +99,18 @@ const remove: MessageFunction = (
   }
 };
 
+const list: MessageFunction = (message: Discord.Message): void => {
+  const embed = new Discord.MessageEmbed();
+  // embed.setTitle('Available roles: ');
+
+  const roles = BotConfig.assignableRoles;
+  embed.addField(
+    'Available roles: ',
+    roles.map((i) => `\`${i.name}\``).join('\n')
+  );
+  message.channel.send(embed);
+};
+
 const help: MessageFunction = (message: Discord.Message): void => {
   const embed = new Discord.MessageEmbed();
   embed.setTitle('Args for command `role`:');
@@ -105,6 +118,7 @@ const help: MessageFunction = (message: Discord.Message): void => {
   embed.addFields([
     { name: 'add <role_name>', value: 'Add role' },
     { name: 'remove <role_name>', value: 'Remove role' },
+    { name: 'list', value: 'Lists all available roles' },
     { name: 'help', value: 'This help embed' },
   ]);
   message.channel.send(embed);

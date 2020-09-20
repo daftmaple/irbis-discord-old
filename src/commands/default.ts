@@ -18,7 +18,7 @@ const help: MessageFunction = (message: Discord.Message): void => {
     },
     {
       name: 'role',
-      value: `Assign/deassign role. Use \`${prefix}job help\` for more details`,
+      value: `Assign/deassign role. Use \`${prefix}role help\` for more details`,
     },
     { name: 'load', value: 'System load' },
     { name: 'help', value: 'This help embed' },
