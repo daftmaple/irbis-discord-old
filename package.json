@@ -8,10 +8,14 @@
     "watch": "yarn tsc --watch",
     "build": "yarn tsc",
     "clean": "rm -rf build/",
-    "rebuild": "yarn clean && yarn build"
+    "rebuild": "yarn clean && yarn build",
+    "lint": "eslint 'src/**/*.ts'"
   },
   "devDependencies": {
-    "@types/ws": "^7.2.5"
+    "@types/ws": "^7.2.5",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
+    "eslint": "^7.9.0"
   },
   "dependencies": {
     "@types/moment": "^2.13.0",
