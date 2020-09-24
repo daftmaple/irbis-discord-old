@@ -25,9 +25,8 @@ export const parseDeltaTime = (time: string, start?: Date): Date => {
 };
 
 export const momentDiffString = (end: Date, start?: Date): string[] => {
-  let date = new Date();
-  if (!!start) {
-    date = start;
+  if (!start) {
+    start = new Date();
   }
 
   const endMoment = moment(end);

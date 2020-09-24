@@ -49,7 +49,7 @@ export class Repository {
     if (opts['self'])
       parsedMessage = `<@${message.author.id}> ${parsedMessage}`;
 
-    if (typeof opts['user'] === 'string' && opts['user'].match(/^<@\!\d+>$/)) {
+    if (typeof opts['user'] === 'string' && opts['user'].match(/^<@!\d+>$/)) {
       parsedMessage = `${opts['user'].toString()} ${parsedMessage}`;
     } else if (typeof opts['user'] === 'boolean') {
       throw new MessageError('Need valid parameter for user: -u @user');
@@ -58,12 +58,8 @@ export class Repository {
     if (opts['everyone']) parsedMessage = `@everyone ${parsedMessage}`;
 
     // Add job for user
-    try {
-      const job = new Job(date, parsedMessage, message.channel, user);
-      user.addJob(job);
-    } catch (e) {
-      throw e;
-    }
+    const job = new Job(date, parsedMessage, message.channel, user);
+    user.addJob(job);
 
     if (opts['delete']) message.delete();
     if (!opts['silent']) message.channel.send('Successfully created a job');
@@ -75,7 +71,7 @@ export class Repository {
     message: Discord.Message
   ): void {
     // Cancel job for user based on opts
-    let user = this._users.get(id);
+    const user = this._users.get(id);
     if (!user) {
       throw new MessageError("User doesn't have any job");
     }
@@ -92,7 +88,7 @@ export class Repository {
   }
 
   public listJob(id: Discord.Snowflake, message: Discord.Message): void {
-    let user = this._users.get(id);
+    const user = this._users.get(id);
     if (!user) {
       throw new MessageError("User doesn't have any job");
     }

@@ -1,4 +1,4 @@
-import { singleton, container } from 'tsyringe';
+import { singleton } from 'tsyringe';
 import Discord from 'discord.js';
 
 import { MessageError } from './types/error';
@@ -31,7 +31,7 @@ export class Handler {
     // Split with positive single/double quote lookahead
     const args = command
       .split(
-        /("[^"\\]*(?:\\[\S\s][^"\\]*)*"|'[^'\\]*(?:\\[\S\s][^'\\]*)*'|\/[^\/\\]*(?:\\[\S\s][^\/\\]*)*\/[gimy]*(?=\s|$)|(?:\\\s|\S)+)/
+        /("[^"\\]*(?:\\[\S\s][^"\\]*)*"|'[^'\\]*(?:\\[\S\s][^'\\]*)*'|\/[^/\\]*(?:\\[\S\s][^/\\]*)*\/[gimy]*(?=\s|$)|(?:\\\s|\S)+)/
       )
       .filter((char) => !char.match(/^\s*$/));
     const cmd = args.shift();
@@ -42,7 +42,7 @@ export class Handler {
 
     try {
       const func = this._command.get(cmd);
-      if (!!func) func(message, user, args);
+      if (func) func(message, user, args);
     } catch (e) {
       if (e instanceof MessageError) message.channel.send(e.message);
     }

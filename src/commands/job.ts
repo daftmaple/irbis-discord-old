@@ -29,7 +29,7 @@ const job: MessageFunction = async (
   );
 
   const func = mapper.get(firstArg);
-  if (!!func) func(message, user, args);
+  if (func) func(message, user, args);
   else {
     message.channel.send(
       `Invalid argument \`${firstArg}\`. Valid arguments: \`${Array.from(
@@ -67,8 +67,7 @@ const cancel: MessageFunction = (
 
 const list: MessageFunction = (
   message: Discord.Message,
-  user: Discord.User,
-  args: string[]
+  user: Discord.User
 ): void => {
   const repo = container.resolve(Repository);
   try {
@@ -78,11 +77,7 @@ const list: MessageFunction = (
   }
 };
 
-const help: MessageFunction = (
-  message: Discord.Message,
-  user: Discord.User,
-  args: string[]
-): void => {
+const help: MessageFunction = (message: Discord.Message): void => {
   const opts = [
     '-m (message)',
     '-t (time)',
