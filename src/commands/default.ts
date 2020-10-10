@@ -1,9 +1,12 @@
 import Discord from 'discord.js';
+import moment from 'moment-timezone';
 
 import { MessageFunction } from '../types/message';
 import { BotConfig } from '../utils/config';
 import { rocketLaunches } from '../utils/request';
 import { systemExec } from '../utils/system';
+
+import { validZoneFormat } from '../utils/momentZone';
 
 const prefix = BotConfig.discordConfig.prefix;
 const npmVersion = process.env.npm_package_version;
@@ -61,14 +64,28 @@ const version: MessageFunction = (message: Discord.Message) => {
   message.channel.send(`Version ${npmVersion}`);
 };
 
-const rocket: MessageFunction = async (message: Discord.Message) => {
+const rocket: MessageFunction = async (
+  message: Discord.Message,
+  user: Discord.User,
+  args: string[]
+) => {
+  const tz = validZoneFormat(args[0]);
+
+  if (!tz) {
+    message.channel.send(`Invalid timezone: ${args[0]}`);
+    return;
+  }
+
   try {
     const launches = await rocketLaunches();
 
     const fields = launches.result.map((i) => {
-      const time = `**- Launch time**: ${new Date(
-        parseInt(i.sort_date) * 1000
-      ).toUTCString()}${i.win_open ? '' : ' (estimated)'}`;
+      const formattedDate = moment(new Date(parseInt(i.sort_date) * 1000))
+        .tz(tz)
+        .format('llll ZZ');
+      const time = `**- Launch time**: ${formattedDate} (${tz})${
+        i.win_open ? '' : ' (estimated)'
+      }`;
       const provider = `**- Provider**: ${i.provider.name}`;
       const vehicle = `**- Vehicle name**: ${i.vehicle.name}`;
       const pad = `**- Launch location**: ${i.pad.location.name} in ${i.pad.location.country}, pad ${i.pad.name}`;

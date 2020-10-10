@@ -1,6 +1,6 @@
 {
   "name": "irbisbot",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "main": "build/src/index.js",
   "license": "MIT",
   "scripts": {
@@ -23,7 +23,7 @@
     "axios": "^0.20.0",
     "discord.js": "^12.2.0",
     "getopts": "^2.2.5",
-    "moment": "^2.27.0",
+    "moment-timezone": "^0.5.31",
     "node-schedule": "^1.3.2",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0",
