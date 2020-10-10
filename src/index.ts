@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import Discord from 'discord.js';
 import { container } from 'tsyringe';
 import { Handler } from './handler';
+import { autorole } from './role';
 import { BotConfig } from './utils/config';
 
 const client: Discord.Client = new Discord.Client({
@@ -16,6 +17,8 @@ client.on('message', async (message: Discord.Message) => {
   if (!message.content.startsWith(discordConfig.prefix)) return;
   handler.handleMessage(message);
 });
+
+client.on('guildMemberAdd', autorole);
 
 client.login(discordConfig.token);
 client.on('ready', () => {

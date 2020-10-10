@@ -15,5 +15,6 @@
     "twitchChannelId": "",
     "twitchClientId": "",
     "twitchClientSecret": ""
-  }
+  },
+  "autorole": ["700001111222233334"]
 }

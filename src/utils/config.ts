@@ -22,6 +22,7 @@ interface IConfig {
   assignableRoles: IAssignableRole[];
   discordConfig: IDiscordConfig;
   twitchNotificationConfig: ITwitchNotificationConfig;
+  autorole: string[];
 }
 
 const BotConfig: IConfig = botConfig;
