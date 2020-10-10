@@ -2,6 +2,7 @@ import Discord from 'discord.js';
 
 import { MessageFunction } from '../types/message';
 import { BotConfig } from '../utils/config';
+import { rocketLaunches } from '../utils/request';
 import { systemExec } from '../utils/system';
 
 const prefix = BotConfig.discordConfig.prefix;
@@ -56,8 +57,41 @@ const load: MessageFunction = async (message: Discord.Message) => {
   }
 };
 
-const version: MessageFunction = async (message: Discord.Message) => {
+const version: MessageFunction = (message: Discord.Message) => {
   message.channel.send(`Version ${npmVersion}`);
 };
 
-export const defaultHandler = { help, load, version };
+const rocket: MessageFunction = async (message: Discord.Message) => {
+  try {
+    const launches = await rocketLaunches();
+
+    const fields = launches.result.map((i) => {
+      const time = `**- Launch time**: ${new Date(
+        parseInt(i.sort_date) * 1000
+      ).toUTCString()}${i.win_open ? '' : ' (estimated)'}`;
+      const provider = `**- Provider**: ${i.provider.name}`;
+      const vehicle = `**- Vehicle name**: ${i.vehicle.name}`;
+      const pad = `**- Launch location**: ${i.pad.location.name} in ${i.pad.location.country}, pad ${i.pad.name}`;
+      const description = `*${i.launch_description}*` || '';
+
+      const value = [time, provider, vehicle, pad, description];
+
+      return {
+        name: i.name,
+        value: value.join('\n'),
+      };
+    });
+
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle('Next rocket launches');
+    embed.setURL('https://www.rocketlaunch.live/');
+
+    embed.addFields(fields);
+    embed.setFooter('This command uses RocketLaunch.Live API');
+    message.channel.send(embed);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const defaultHandler = { help, load, version, rocket };

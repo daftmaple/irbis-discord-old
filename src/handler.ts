@@ -20,6 +20,7 @@ export class Handler {
         version: defaultHandler.version,
         job: jobHandler.job,
         role: roleHandler.role,
+        rocket: defaultHandler.rocket,
       })
     );
   }
