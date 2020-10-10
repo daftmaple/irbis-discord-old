@@ -83,7 +83,7 @@ const rocket: MessageFunction = async (
       const formattedDate = moment(new Date(parseInt(i.sort_date) * 1000))
         .tz(tz)
         .format('llll ZZ');
-      const time = `**- Launch time**: ${formattedDate} (${tz})${
+      const time = `**- Launch time**: ${formattedDate}${
         i.win_open ? '' : ' (estimated)'
       }`;
       const provider = `**- Provider**: ${i.provider.name}`;
